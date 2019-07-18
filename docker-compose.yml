@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  vpnconnection:
+    image: soarinferret/fortiproxy:latest
+    privileged: true
+    restart: always
+    container_name: vpnconnection
+    ports:
+      - "22222:22"
+      - "33389:3389"
+      - "55900:5900"
+      - "55985:5985"
+    environment:
+      - "VPNADDR=fortigate.example.com:8088"
+      - "VPNUSER=admin"
+      - "VPNPASS=password"
+      - "HOSTIP=172.20.1.30"
+      - "VPNHASH=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
