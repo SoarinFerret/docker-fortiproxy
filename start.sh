@@ -31,9 +31,18 @@ for iface in $(ip a | grep eth | grep inet | awk '{print $2}'); do
   iptables -t nat -A POSTROUTING -s "$iface" -j MASQUERADE
 done
 
+# Setup Custom Route
+cat <<EOF >> /etc/ppp/ip-up.d/fortivpn
+#!/bin/sh
+
+route add $HOSTIP dev ppp0
+EOF
+
+chmod +x /etc/ppp/ip-up.d/fortivpn
+
 while [ true ]; do
   echo "------------ VPN Starts ------------"
-  /usr/bin/openfortivpn ${VPNADDR} -u ${VPNUSER} -p ${VPNPASS} --no-dns --trusted-cert ${VPNHASH}
+  /usr/bin/openfortivpn ${VPNADDR} -u ${VPNUSER} -p ${VPNPASS} --no-dns --trusted-cert ${VPNHASH} --no-routes --pppd-no-peerdns
   echo "------------ VPN exited ------------"
   sleep 10
 done
