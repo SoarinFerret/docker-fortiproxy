@@ -34,12 +34,14 @@ done
 # Setup Custom Route
 cat <<EOF >> /etc/ppp/ip-up.d/fortivpn
 #!/bin/sh
-
 route add $HOSTIP dev ppp0
 EOF
-
 chmod +x /etc/ppp/ip-up.d/fortivpn
 
+# Docker on Windows Support
+mknod /dev/ppp c 108 0 2> /dev/null
+
+# VPN Loop
 while [ true ]; do
   echo "------------ VPN Starts ------------"
   /usr/bin/openfortivpn ${VPNADDR} -u ${VPNUSER} -p ${VPNPASS} --no-dns --trusted-cert ${VPNHASH} --no-routes --pppd-no-peerdns
