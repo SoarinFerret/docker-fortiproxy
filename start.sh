@@ -29,7 +29,6 @@ cat <<EOF >> /etc/ppp/ip-up
 #!/bin/sh
 route add $HOSTIP dev ppp0
 EOF
-chmod +x /etc/ppp/ip-up.d/fortivpn
 
 # Docker on Windows Support
 mknod /dev/ppp c 108 0 2> /dev/null
