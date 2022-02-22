@@ -4,13 +4,6 @@ if [ -z "$VPNADDR" -o -z "$VPNUSER" -o -z "$VPNPASS" -o -z "$HOSTIP" ]; then
   echo "Variables HOSTIP, VPNADDR, VPNUSER and VPNPASS must be set."; exit;
 fi
 
-if [ -z "$VPNHASH" ]; then
-  echo "Variable VPNHASH is required";
-  trustedcert=$(/usr/bin/openfortivpn ${VPNADDR} -u ${VPNUSER} -p ${VPNPASS}| grep trusted-cert | head -n 1 | awk -F "--" ' { print $2} ' | sed -e 's/trusted-cert//g')
-  echo "Trusted cert for $VPNADDR is$trustedcert";
-  exit;
-fi
-
 export VPNTIMEOUT=${VPNTIMEOUT:-5}
 
 # Setup IPTABLES
@@ -32,7 +25,7 @@ for iface in $(ip a | grep eth | grep inet | awk '{print $2}'); do
 done
 
 # Setup Custom Route
-cat <<EOF >> /etc/ppp/ip-up.d/fortivpn
+cat <<EOF >> /etc/ppp/ip-up
 #!/bin/sh
 route add $HOSTIP dev ppp0
 EOF
@@ -43,6 +36,10 @@ mknod /dev/ppp c 108 0 2> /dev/null
 
 # VPN Loop
 while [ true ]; do
+  if [ -z "$VPNHASH" ]; then
+    VPNHASH=$(echo | openssl s_client -connect $VPNADDR 2>/dev/null | openssl x509 -outform der | sha256sum | awk '{ print $1 }')
+    echo "Trusted cert hash for $VPNADDR is $VPNHASH";
+  fi
   echo "------------ VPN Starts ------------"
   /usr/bin/openfortivpn ${VPNADDR} -u ${VPNUSER} -p ${VPNPASS} --no-dns --trusted-cert ${VPNHASH} --no-routes --pppd-no-peerdns
   echo "------------ VPN exited ------------"

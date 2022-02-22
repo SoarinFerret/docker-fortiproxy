@@ -1,6 +1,6 @@
 # Docker-FortiProxy
 
-This project is forked from [docker-fortivpn](https://github.com/SoarinFerret/docker-fortivpn), which was inspired by the work provided here: [docker-forticlient](https://github.com/AuchanDirect/docker-forticlient)
+This project is forked from [docker-fortivpn](https://github.com/SoarinFerret/docker-fortivpn), which was inspired by the work provided here: [docker-forticlient](https://github.com/AuchanDirect/docker-forticlient). Most recently, the migration to alpine linux was made available due to the work done here: [openfortivpn-haproxy](https://github.com/jeffre/openfortivpn-haproxy)
 
 Instead of doing port forwards and such, this container forwards and NATs _ALL_ incoming traffic to the container over to the host on the other side of the FortiSSL VPN. Useful if you don't have standard ports you want to connect to, or want to forward different protocols besides TCP.
 
@@ -9,7 +9,7 @@ Instead of doing port forwards and such, this container forwards and NATs _ALL_ 
 Here are a list of the required environment variables:
 
 * `VPNADDR`: Url of the VPN with port. For example, `fortigate.example.com:8443`
-* `VPNHASH`: Hash of the certificate used by the VPN
+* `VPNHASH`: Hash of the certificate used by the VPN. If excluded, the script will grab that information for you.
 * `VPNUSER`: Username for the user connecting to the VPN
 * `VPNPASS`: Password of the user connection to the VPN
 * `HOSTIP`: IP of the host you want to connect to on the other side
