@@ -33,9 +33,14 @@ EOF
 # Docker on Windows Support
 mknod /dev/ppp c 108 0 2> /dev/null
 
+SET_HASH=0
+if [ -z "$VPNHASH" ]; then
+  SET_HASH=1
+fi
+
 # VPN Loop
 while [ true ]; do
-  if [ -z "$VPNHASH" ]; then
+  if [[ $SET_HASH -eq 1 ]]; then
     VPNHASH=$(echo | openssl s_client -connect $VPNADDR 2>/dev/null | openssl x509 -outform der | sha256sum | awk '{ print $1 }')
     echo "Trusted cert hash for $VPNADDR is $VPNHASH";
   fi
